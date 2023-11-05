@@ -1,0 +1,154 @@
+:root {
+    /*Colors*/
+      --mi-color: #f9f9fa;
+    --color-primary: #25ab75;
+    --color-primary-dark: #288c61;
+    --color-bg-primary: #1a1a1a;
+    --color-bg-secondary: #242424;
+    --color-bg-footer: #151515;
+    --color-dark: #ffffff;
+    --color-white: #ffffff;
+    /*while*/
+    --color-text: #676767;
+    --color-border: #373737;
+    --color-highlight: #ffcc00;
+
+
+
+    /*Font & Typograhy*/
+        --ff-body: "Space Grotesk", sans-serif;
+
+    /*Font sizes*/
+    --fs-sm: 1.4rem;
+    --fs-md: 1.6rem;
+    --fs-lg: 2rem;
+    --fs-xl: 2.4rem;
+    --fs-xxl: 3.2rem;
+    --fs-biggest: clamp(3rem, 8vw, 5rem);
+    /*clamp(min, val, max)*/
+
+    /*Font weight: grosor de letra*/
+    --fw-regular: 400;
+    --fw-medium: 500;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+
+    /*Z-index
+----------------------*/
+    --zindex-menu: 1000;
+    --zindex-fixed: 1010;
+
+    /*With & Height
+---------------*/
+    --width-container: 98rem;
+    --height-header: 10rem;
+    --height-header--scroll: 8rem;
+
+    /*Transition and box shadow
+----------------------------*/
+    --transition: all 0.4s cubic-bezier(0.645, 0.045, 0.355, 1);
+    --box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+
+}
+
+/*CSS Reset
+--------------------------------------------*/
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--color-dark);
+    font-weight: var(--fw-bold);
+}
+
+html {
+    font-size: 62.5%;
+    scroll-behavior: smooth;
+    /*desplazamiento*/
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+ul,
+p {
+    margin: 0;
+    padding: 0;
+}
+
+ul {
+    list-style-type: none;
+}
+
+
+a {
+    text-decoration: none;
+    color: var(--color-text);
+}
+
+main {
+    /*El desbordamiento se recorta y el resto del contenido será invisible*/
+    overflow: hidden;
+}
+
+body {
+    background-color: var(--color-bg-primary);
+    font-family: var(--ff-body);
+    font-size: var(--fs-md);
+    color: var(--color-text);
+    margin-top: var(--height-header);
+    line-height: 1.2;
+}
+
+/* Reusable CSS
+--------------------------------------------------------------*/
+.container   {
+    width: 95%;
+    max-width: var(--width-container);
+    margin: auto;
+}
+
+.section {
+    padding: 5rem 0;
+}
+
+.section__header {
+    margin: 8rem 0;
+    text-align: center;
+}
+
+.section__title {
+    font-size: var(--fs-xl);
+    margin-bottom: 0.5rem;
+}
+
+.section__subtitle {
+    font-weight: var(--fs-xl);
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.section__subtitle::after {
+    position: absolute;
+    content: "";
+    width: 50%;
+    height: 0.5rem;
+    background-color: var(--color-primary);
+    bottom: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.d-grid {
+    display: grid;
+    gap: 3rem;
+}

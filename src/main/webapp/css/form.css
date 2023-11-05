@@ -1,0 +1,83 @@
+/* Importa las variables de reusable.css */
+@import "reusable.css";
+
+/* Estilos comunes para formularios */
+
+.form-title {
+    color: var(--color-primary);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--color-dark);
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+}
+
+.form-submit {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.form-submit:hover {
+    background-color: var(--color-primary-dark);
+}
+
+/* Estilos específicos para el formulario de registro */
+.form-wrapper {
+    min-height: calc(100vh - var(--height-header));
+    padding: 5rem 0;
+}
+.form-container.register {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--color-bg-secondary);
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 1);
+}
+
+/* Estilos específicos para el formulario de inicio de sesión */
+.form-container.login {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--color-bg-secondary);
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 1);
+}
+
+.password-input-container {
+    position: relative;
+}
+
+.password-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+}
+
+#togglePassword {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+#togglePassword:hover {
+    color: var(--color-primary);
+}
