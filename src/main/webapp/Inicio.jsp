@@ -37,6 +37,7 @@
                             <div class="container_numeric">
                                 <span id="envioMoney">$</span>
                                 <input type="text" class="show-money" name="montoEnviado" inputmode="numeric" value="100" id="envioInput">
+                                <input type="hidden" id="envioMoneda" value="USD">
                             </div>
                         </div>
                         <div class="money" id="envioCurrency">Dólares</div>
@@ -47,10 +48,14 @@
                             <div class="container_numeric">
                                 <span id="recibeMoney">S/</span>
                                 <input type="text" class="show-money" name="montoRecibido" inputmode="numeric" value="360" id="recibeInput">
+                                <input type="hidden" id="recibeMoneda" value="PEN">
                             </div>
                         </div>
                         <div class="money" id="recibeCurrency">Soles</div>
                     </div>
+                </div>
+                <div class="taza-cambio-container">
+                    <button class="btn" id="cambio">cambio</button>
                 </div>
                 <form id="datosAdicionalesForm" method="POST" action="Operacion.jsp" class="datosAdicionalesForm">
                     <input type="hidden" id="operacionTipo" name="operacionTipo" value="">

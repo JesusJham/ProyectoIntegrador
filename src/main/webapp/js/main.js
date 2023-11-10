@@ -1,43 +1,13 @@
-/*========================FUNCTION BUTTON CANCELAR=======================*/
-// Asegúrate de que el código se ejecute después de que el DOM esté cargado
 document.addEventListener("DOMContentLoaded", function () {
-    // Verificar si el elemento "cancelButton" existe en la página
-    var cancelButton = document.getElementById("cancelButton");
+    // Botón Cancelar
+    const cancelButton = document.getElementById("cancelButton");
     if (cancelButton) {
-        // Asignar el evento click solo si el elemento existe
         cancelButton.addEventListener("click", function (event) {
-            window.location.href = "CuentasBancarias.jsp"; // Redirigir a la página JSP deseada
+            window.location.href = "CuentasBancarias.jsp";
         });
     }
-});
 
-
-/*======================BOTON CURRENCY==================================================*/
-// Obtén los botones por su ID
-document.addEventListener("DOMContentLoaded", function () {
-    // Obtén los botones por su ID
-    const compraBtn = document.getElementById("compraBtn");
-    const ventaBtn = document.getElementById("ventaBtn");
-
-    // Agrega un event listener para el botón de compra
-    compraBtn.addEventListener("click", () => {
-        // Quita la clase "selected" de todos los botones
-        compraBtn.classList.add("selected");
-        ventaBtn.classList.remove("selected");
-
-    });
-
-    // Agrega un event listener para el botón de venta
-    ventaBtn.addEventListener("click", () => {
-        // Quita la clase "selected" de todos los botones
-        ventaBtn.classList.add("selected");
-        compraBtn.classList.remove("selected");
-
-    });
-});
-
-/*=========================CAMBIO DE POSICION SOLES Y DOLARES==================================*/
-document.addEventListener("DOMContentLoaded", function () {
+    // Botones Currency (Compra y Venta)
     const compraBtn = document.getElementById("compraBtn");
     const ventaBtn = document.getElementById("ventaBtn");
     const envioCurrency = document.getElementById("envioCurrency");
@@ -46,109 +16,171 @@ document.addEventListener("DOMContentLoaded", function () {
     const recibeMoney = document.getElementById("recibeMoney");
     const envioMoneyInput = document.getElementById("envioInput");
     const recibeMoneyInput = document.getElementById("recibeInput");
+    const envioMoneda = document.getElementById("envioMoneda");
+    const recibeMoneda = document.getElementById("recibeMoneda");
+    const cambio = document.getElementById("cambio");
+
+    // Función para actualizar la interfaz según el modo (Compra o Venta)
+    function updateCurrencyAndMoney(isCompra) {
+        envioCurrency.textContent = isCompra ? "Dólares" : "Soles";
+        recibeCurrency.textContent = isCompra ? "Soles" : "Dólares";
+        envioMoney.textContent = isCompra ? "$" : "S/";
+        recibeMoney.textContent = isCompra ? "S/" : "$";
+        envioMoneda.value = isCompra ? "USD" : "PEN";
+        recibeMoneda.value = isCompra ? "PEN" : "USD";
+    }
+
+    // Función para manejar errores de la solicitud a la API
+    function handleApiError(error) {
+        console.error('Error en la solicitud API:', error);
+    }
+
+    // Función para actualizar el DOM con la tasa de cambio
+    function updateExchangeRate(moneda_one, moneda_two, envioValue, recibeValue, updatingInput) {
+        fetch(`https://api.exchangerate-api.com/v4/latest/${moneda_one}`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('No se puede acceder a la API. Código de estado: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    const taza = data.rates[moneda_two];
+
+                    if (updatingInput === 'envio') {
+                        recibeMoneyInput.value = (envioValue * taza).toFixed(2);
+                    } else if (updatingInput === 'recibe') {
+                        envioMoneyInput.value = (recibeValue / taza).toFixed(2);
+                    }
+
+                    // Mostrar el valor de los cambios en la consola
+                    console.log(`1 ${moneda_one} = ${taza} ${moneda_two}`);
+                    console.log(data);
+                })
+                .catch(handleApiError);
+    }
+    
+    function updateExchangeRate2(moneda_one, moneda_two, envioValue, recibeValue) {
+        fetch(`https://api.exchangerate-api.com/v4/latest/${moneda_one}`)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('No se puede acceder a la API. Código de estado: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    const taza = data.rates[moneda_two];
+                    recibeMoneyInput.value = (envioValue * taza).toFixed(2);
+
+                    // Mostrar el valor de los cambios en la consola
+                    console.log(`1 ${moneda_one} = ${taza} ${moneda_two}`);
+                    console.log(data);
+                })
+                .catch(handleApiError);
+    }
+
+    /*******************************CALCULAR******************************************/
+// Modifica la función calculate para manejar el cálculo de envioInput y recibeInput
+    function calculate2(envioValue, recibeValue) {
+        const moneda_one = envioMoneda.value;
+        const moneda_two = recibeMoneda.value;
+        updateExchangeRate2(moneda_one, moneda_two, envioValue, recibeValue);
+    }
+    
+
+// Modifica la función calculate para manejar el cálculo de envioInput y recibeInput
+    function calculate(envioValue, recibeValue, updatingInput) {
+        const moneda_one = envioMoneda.value;
+        const moneda_two = recibeMoneda.value;
+        updateExchangeRate(moneda_one, moneda_two, envioValue, recibeValue, updatingInput);
+    }
+
+// Agrega event listeners a envioInput y recibeInput
+    envioMoneyInput.addEventListener("input", function () {
+        calculate(envioMoneyInput.value, recibeMoneyInput.value, 'envio');
+    });
+
+    recibeMoneyInput.addEventListener("input", function () {
+        calculate(envioMoneyInput.value, recibeMoneyInput.value, 'recibe');
+    });
+
+
+    /***************************************************************************************/
+
+    // Inicialmente, estamos en el modo de compra
+    let esCompra = true;
+
+    // Función para cambiar entre Compra y Venta
+    function toggleCompraVenta() {
+        esCompra = !esCompra; // Cambiar el valor de la variable entre true y false
+        updateCurrencyAndMoney(esCompra); // Llamar a la función para actualizar la interfaz
+        if (esCompra) {
+            compraBtn.classList.add("selected");
+            ventaBtn.classList.remove("selected");
+        } else {
+            ventaBtn.classList.add("selected");
+            compraBtn.classList.remove("selected");
+        }
+        // Llamar a la función calculate con los valores actuales de envioMoneyInput y recibeMoneyInput
+        calculate2(envioMoneyInput.value, recibeMoneyInput.value);
+        cambio.textContent = esCompra ? "Cambiar a Venta" : "Cambiar a Compra";
+    }
+
+    cambio.addEventListener('click', toggleCompraVenta);
 
     compraBtn.addEventListener("click", () => {
-        envioCurrency.textContent = "Dólares";
-        recibeCurrency.textContent = "Soles";
-        envioMoney.textContent = "$";
-        recibeMoney.textContent = "S/";
+        if (!esCompra) {
+            toggleCompraVenta();
+        }
+        compraBtn.classList.add("selected");
+        ventaBtn.classList.remove("selected");
+        updateCurrencyAndMoney(true);
     });
 
     ventaBtn.addEventListener("click", () => {
-        envioCurrency.textContent = "Soles";
-        recibeCurrency.textContent = "Dólares";
-        envioMoney.textContent = "S/";
-        recibeMoney.textContent = "$";
+        if (esCompra) {
+            toggleCompraVenta();
+        }
+        ventaBtn.classList.add("selected");
+        compraBtn.classList.remove("selected");
+        updateCurrencyAndMoney(false);
     });
 
-    // Agrega un event listener para el botón de compra
-    compraBtn.addEventListener("click", () => {
-        // Asigna el valor inicial al input de envío (en dólares)
-        const valorInicialDolares = parseFloat(envioMoneyInput.value);
-        envioMoneyInput.value = valorInicialDolares.toFixed(2); // Redondea a 2 decimales
-
-        // Calcula y muestra el resultado en el segundo input (en soles)
-        recibeMoneyInput.value = (valorInicialDolares * 3.6).toFixed(2); // Redondea a 2 decimales
-    });
-
-    // Agrega un event listener para el botón de venta
-    ventaBtn.addEventListener("click", () => {
-        // Asigna el valor inicial al input de envío (en soles)
-        const valorInicialSoles = parseFloat(envioMoneyInput.value);
-        envioMoneyInput.value = valorInicialSoles.toFixed(2); // Redondea a 2 decimales
-
-        // Calcula y muestra el resultado en el segundo input (en dólares)
-        recibeMoneyInput.value = (valorInicialSoles / 3.6).toFixed(2); // Redondea a 2 decimales
-    });
-});
-
-
-/**===================FORMULARIO OPERACION============================*/
-document.addEventListener("DOMContentLoaded", function () {
+    // Formulario Operacion
     const datosAdicionalesForm = document.getElementById("datosAdicionalesForm");
     const operacionTipoInput = document.getElementById("operacionTipo");
     const montoEnviadoInput = document.getElementById("montoEnviado");
     const montoRecibidoInput = document.getElementById("montoRecibido");
 
     datosAdicionalesForm.addEventListener("submit", (event) => {
-        // Evitar que el formulario se envíe automáticamente
         event.preventDefault();
 
-        // Configurar los datos según lo seleccionado en "compra" o "venta"
-        const compraBtn = document.getElementById("compraBtn");
-        const ventaBtn = document.getElementById("ventaBtn");
+        operacionTipoInput.value = compraBtn.classList.contains("selected") ? "compra" : "venta";
+        montoEnviadoInput.value = envioMoneyInput.value;
+        montoRecibidoInput.value = recibeMoneyInput.value;
 
-        if (compraBtn.classList.contains("selected")) {
-            operacionTipoInput.value = "compra";
-            montoEnviadoInput.value = document.getElementById("envioInput").value;
-            montoRecibidoInput.value = document.getElementById("recibeInput").value;
-        } else if (ventaBtn.classList.contains("selected")) {
-            operacionTipoInput.value = "venta";
-            montoEnviadoInput.value = document.getElementById("envioInput").value;
-            montoRecibidoInput.value = document.getElementById("recibeInput").value;
-        }
-
-        // Enviar el formulario de datos adicionales
         datosAdicionalesForm.submit();
     });
 });
 
-/*===============OBTENER EL NOMBRE DEL TITULAR y BANCO=============================================================*/
-
 document.addEventListener("DOMContentLoaded", function () {
+    // Elementos relacionados con las tarjetas y cuentas
     const tarjetaSelect = document.getElementById('tarjeta');
     const cuentaSelect = document.getElementById('cuenta');
     const titularSpan = document.getElementById('titular');
     const bancoSpan = document.getElementById('banco');
 
-    // Verifica si el elemento 'tarjetaSelect' se encuentra en la página
-    if (tarjetaSelect) {
-        tarjetaSelect.addEventListener('change', function () {
-            // Obtén el nombre del titular desde el atributo data de la opción seleccionada
-            const selectedOption = tarjetaSelect.options[tarjetaSelect.selectedIndex];
-            const nombreTitular = selectedOption.getAttribute('data-titular');
-            // Muestra el nombre del titular en el elemento HTML
-            titularSpan.textContent = nombreTitular;
-        });
+    // Función para actualizar el nombre del titular o banco
+    function actualizarNombreElemento(select, span) {
+        if (select) {
+            select.addEventListener('change', function () {
+                const selectedOption = select.options[select.selectedIndex];
+                const nombre = selectedOption.getAttribute('data-titular');
+                span.textContent = nombre;
+            });
+        }
     }
+
+    actualizarNombreElemento(tarjetaSelect, titularSpan);
+    actualizarNombreElemento(cuentaSelect, bancoSpan);
 });
-
-document.addEventListener("DOMContentLoaded", function () {
-    const cuentaSelect = document.getElementById('cuenta');
-    const bancoSpan = document.getElementById('banco');
-
-    // Verifica si el elemento 'tarjetaSelect' se encuentra en la página
-    if (cuentaSelect) {
-        cuentaSelect.addEventListener('change', function () {
-            // Obtén el nombre del titular desde el atributo data de la opción seleccionada
-            const selectedOption = cuentaSelect.options[cuentaSelect.selectedIndex];
-            const nombreBanco = selectedOption.getAttribute('data-titular');
-            // Muestra el nombre del titular en el elemento HTML
-            bancoSpan.textContent = nombreBanco;
-        });
-    }
-});
-
-
-
-
