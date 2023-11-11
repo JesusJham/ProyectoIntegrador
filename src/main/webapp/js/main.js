@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+        updateExchangeRateCommon(0, 0, (taza, envioValue, recibeValue) => {}); // Llamada a la función para mostrar las tasas de cambio
+
     const cancelButton = document.getElementById("cancelButton");
     const compraBtn = document.getElementById("compraBtn");
     const ventaBtn = document.getElementById("ventaBtn");
@@ -11,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const envioMoneda = document.getElementById("envioMoneda");
     const recibeMoneda = document.getElementById("recibeMoneda");
     const cambio = document.getElementById("cambio");
+    let esCompra = true; // Declaración global, no la repitas
 
     function updateCurrencyAndMoney(isCompra) {
         envioCurrency.textContent = isCompra ? "Dólares" : "Soles";
@@ -25,24 +29,42 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error('Error en la solicitud API:', error);
     }
 
-    function updateExchangeRateCommon(moneda_one, moneda_two, envioValue, recibeValue, callback) {
-        fetch(`https://api.exchangerate-api.com/v4/latest/${moneda_one}`)
+    function updateExchangeRateCommon(envioValue, recibeValue, callback) {
+        fetch('https://api.exchangerate-api.com/v4/latest/USD')
                 .then(response => {
                     if (!response.ok)
                         throw new Error('No se puede acceder a la API. Código de estado: ' + response.status);
                     return response.json();
                 })
                 .then(data => {
-                    const taza = data.rates[moneda_two];
-                    callback(taza, envioValue, recibeValue);
-                    console.log(`1 ${moneda_one} = ${taza} ${moneda_two}`);
-                    console.log(data);
+                    let tazaCompra = data.rates.PEN; // Obtenemos el tipo de cambio de USD a PEN para compra
+                    let tazaVenta = data.rates.PEN; // Obtenemos el tipo de cambio de USD a PEN para venta
+                    let uptadeTazaVenta = data.rates.PEN;
+                    let tazaCompraGlobal = data.rates.PEN;
+                    let tazaVentaGlobal = data.rates.PEN;
+                        
+                        tazaVenta = 1 / (tazaVenta * 1.003); // Si es 'venta', invertimos la taza
+                        uptadeTazaVenta = 1 / tazaVenta;
+                        
+                        tazaCompra = tazaCompra - (tazaCompra * 0.003);
+
+                    if (!esCompra) {
+                        console.log(uptadeTazaVenta);
+                        document.getElementById('taza').value = uptadeTazaVenta.toFixed(3); // Asignamos el valor de tazaPEN para venta
+                    } else {
+                        document.getElementById('taza').value = tazaCompra.toFixed(3); // Asignamos el valor de tazaPEN para compra
+                    }
+                    callback(esCompra ? tazaCompra.toFixed(3) : tazaVenta.toFixed(3), envioValue, recibeValue);
+                    document.getElementById('compraBtn').innerText = `Compra (Tasa: ${tazaCompra.toFixed(3)})`;
+                    document.getElementById('ventaBtn').innerText = `Venta (Tasa: ${uptadeTazaVenta.toFixed(3)})`;
+                    console.log(`1 USD = ${esCompra ? tazaCompra : tazaVenta} PEN`);
                 })
                 .catch(handleApiError);
     }
 
+
     function updateExchangeRate(moneda_one, moneda_two, envioValue, recibeValue, updatingInput) {
-        updateExchangeRateCommon(moneda_one, moneda_two, envioValue, recibeValue, (taza, envioValue, recibeValue) => {
+        updateExchangeRateCommon(envioValue, recibeValue, (taza, envioValue, recibeValue) => {
             if (updatingInput === 'envio') {
                 recibeMoneyInput.value = (envioValue * taza).toFixed(2);
             } else if (updatingInput === 'recibe') {
@@ -52,27 +74,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateExchangeRate2(moneda_one, moneda_two, envioValue, recibeValue) {
-        updateExchangeRateCommon(moneda_one, moneda_two, envioValue, recibeValue, (taza, envioValue) => {
+        updateExchangeRateCommon(envioValue, recibeValue, (taza, envioValue) => {
             recibeMoneyInput.value = (envioValue * taza).toFixed(2);
         });
     }
 
     function calculate(envioValue, recibeValue, updatingInput) {
-        const moneda_one = envioMoneda.value;
-        const moneda_two = recibeMoneda.value;
-        updateExchangeRate(moneda_one, moneda_two, envioValue, recibeValue, updatingInput);
+        updateExchangeRate(envioMoneda.value, recibeMoneda.value, envioValue, recibeValue, updatingInput);
     }
 
     function calculate2(envioValue, recibeValue) {
-        const moneda_one = envioMoneda.value;
-        const moneda_two = recibeMoneda.value;
-        updateExchangeRate2(moneda_one, moneda_two, envioValue, recibeValue);
+        updateExchangeRate2(envioMoneda.value, recibeMoneda.value, envioValue, recibeValue);
     }
 
     envioMoneyInput.addEventListener("input", () => calculate(envioMoneyInput.value, recibeMoneyInput.value, 'envio'));
     recibeMoneyInput.addEventListener("input", () => calculate(envioMoneyInput.value, recibeMoneyInput.value, 'recibe'));
 
-    let esCompra = true;
 
     function toggleCompraVenta() {
         esCompra = !esCompra;
@@ -119,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     }
-    
+
     actualizarNombreElemento(tarjetaSelect, titularSpan);
     actualizarNombreElemento(cuentaSelect, bancoSpan);
 });

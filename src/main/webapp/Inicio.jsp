@@ -61,6 +61,7 @@
                     <input type="hidden" id="operacionTipo" name="operacionTipo" value="">
                     <input type="hidden" id="montoEnviado" name="montoEnviado" value="">
                     <input type="hidden" id="montoRecibido" name="montoRecibido" value="">
+                    <input type="hidden" id="taza" name="taza" value="">
                     <input type="hidden" id="idUsuario" name="idUsuario" value="<%= idUsuario%>">
                     <button type="submit" class="btn btn-primary" onclick="setMontos()">Inicio de operación</button>
                 </form>
