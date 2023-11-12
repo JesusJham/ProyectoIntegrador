@@ -34,6 +34,7 @@
                     String idUsuarioStr = request.getParameter("idUsuario");
                     int idUsuario = Integer.parseInt(idUsuarioStr);
                     String operacionTipo = request.getParameter("operacionTipo");
+                    String taza = request.getParameter("taza");
                 %>
 
                 <form action="RegistrarOperacion" method="post" id="OperacionForm">
@@ -99,6 +100,7 @@
                             </select>
                             <label for="banco" class="label-container">Nombre del Banco:</label>
                             <span id="banco" class="titular-container"></span>
+                            <input type="hidden" name="taza" value="<%= taza %>">
                         </div>
                     </div>
                     <div class="form-buttons">

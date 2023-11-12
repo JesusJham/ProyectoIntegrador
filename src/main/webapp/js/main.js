@@ -40,8 +40,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     let tazaCompra = data.rates.PEN; // Obtenemos el tipo de cambio de USD a PEN para compra
                     let tazaVenta = data.rates.PEN; // Obtenemos el tipo de cambio de USD a PEN para venta
                     let uptadeTazaVenta = data.rates.PEN;
-                    let tazaCompraGlobal = data.rates.PEN;
-                    let tazaVentaGlobal = data.rates.PEN;
                         
                         tazaVenta = 1 / (tazaVenta * 1.003); // Si es 'venta', invertimos la taza
                         uptadeTazaVenta = 1 / tazaVenta;
@@ -50,9 +48,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     if (!esCompra) {
                         console.log(uptadeTazaVenta);
-                        document.getElementById('taza').value = uptadeTazaVenta.toFixed(3); // Asignamos el valor de tazaPEN para venta
+                        document.getElementById('taza').value = uptadeTazaVenta.toFixed(3); // Asignamos el valor de taza para venta
                     } else {
-                        document.getElementById('taza').value = tazaCompra.toFixed(3); // Asignamos el valor de tazaPEN para compra
+                        document.getElementById('taza').value = tazaCompra.toFixed(3); // Asignamos el valor de taza para compra
                     }
                     callback(esCompra ? tazaCompra.toFixed(3) : tazaVenta.toFixed(3), envioValue, recibeValue);
                     document.getElementById('compraBtn').innerText = `Compra (Tasa: ${tazaCompra.toFixed(3)})`;
@@ -139,4 +137,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
     actualizarNombreElemento(tarjetaSelect, titularSpan);
     actualizarNombreElemento(cuentaSelect, bancoSpan);
+});
+
+/**===================FORMULARIO OPERACION============================*/
+document.addEventListener("DOMContentLoaded", function () {
+    const datosAdicionalesForm = document.getElementById("datosAdicionalesForm");
+    const operacionTipoInput = document.getElementById("operacionTipo");
+    const montoEnviadoInput = document.getElementById("montoEnviado");
+    const montoRecibidoInput = document.getElementById("montoRecibido");
+
+    datosAdicionalesForm.addEventListener("submit", (event) => {
+        // Evitar que el formulario se envíe automáticamente
+        event.preventDefault();
+
+        // Configurar los datos según lo seleccionado en "compra" o "venta"
+        const compraBtn = document.getElementById("compraBtn");
+        const ventaBtn = document.getElementById("ventaBtn");
+
+        if (compraBtn.classList.contains("selected")) {
+            operacionTipoInput.value = "compra";
+            montoEnviadoInput.value = document.getElementById("envioInput").value;
+            montoRecibidoInput.value = document.getElementById("recibeInput").value;
+        } else if (ventaBtn.classList.contains("selected")) {
+            operacionTipoInput.value = "venta";
+            montoEnviadoInput.value = document.getElementById("envioInput").value;
+            montoRecibidoInput.value = document.getElementById("recibeInput").value;
+        }
+            
+
+        // Enviar el formulario de datos adicionales
+        datosAdicionalesForm.submit();
+    });
 });

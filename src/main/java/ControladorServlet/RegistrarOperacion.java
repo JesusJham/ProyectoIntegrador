@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,13 +33,13 @@ public class RegistrarOperacion extends HttpServlet {
             int idTarjeta = Integer.parseInt(request.getParameter("tarjeta"));
             int idCuentaB = Integer.parseInt(request.getParameter("cuenta"));
             String tipoOperacion = request.getParameter("operacionTipo");
-            float tipoCambio = 3.6f;
-            String estado = "Atendida";
+            float tipoCambio = Float.parseFloat(request.getParameter("taza"));
+            String estado = "En Proceso";
             int codigo = generarCodigoUnico();
             Date fechaHora = fechaHora();
             float montoEnviado = Float.parseFloat(montoEnviadoStr); // Establece un valor predeterminado o directo
             float montoRecibido = Float.parseFloat(montoRecibidoStr);
-            
+
             Usuario usuario = new Usuario(idUsuario);
             Tarjeta tarjeta = new Tarjeta(idTarjeta);
             CuentaBancarias cuentaBancarias = new CuentaBancarias(idCuentaB);
@@ -47,6 +50,25 @@ public class RegistrarOperacion extends HttpServlet {
             boolean exito = transferenciasDAOImpl.registrarTransferencia(transferencias, session);
 
             if (exito) {
+                // Se ha realizado la transferencia, ahora programamos la actualización del estado
+                ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+                executorService.schedule(() -> {
+                    // Actualizar el estado después de 10 segundos
+                    int idTransferencia = transferencias.getIdTransferencia();
+                    String nuevoEstado = "Atendido"; // El nuevo estado después de 10 segundos
+                    Date nuevaFecha = fechaHora(); // Obtener la fecha actual
+
+                    // Llamar al método para actualizar el estado
+                    TransferenciasDAOImpl transferenciasDAO = new TransferenciasDAOImpl();
+                    boolean estadoActualizado = transferenciasDAO.actualizarEstadoPorUsuario(idTransferencia, nuevoEstado, nuevaFecha);
+
+                    if (estadoActualizado) {
+                        System.out.println("Estado actualizado después de 10 segundos");
+                    } else {
+                        System.out.println("Error al actualizar el estado");
+                    }
+                }, 10, TimeUnit.SECONDS);
+
                 response.sendRedirect("HistorialOperaciones.jsp");
             } else {
                 response.sendRedirect("error.jsp");
