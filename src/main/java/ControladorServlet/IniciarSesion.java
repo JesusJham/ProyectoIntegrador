@@ -73,8 +73,10 @@ public class IniciarSesion extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("nombreUsuario", usuario.getNombre());
                 session.setAttribute("idUsuario", usuario.getIdUsuario());
+                session.setAttribute("email", usuario.getEmail());
                 // Guardar el ID de la sesión en la sesión de servlet
                 session.setAttribute("sesionId", sesion.getIdSesion());
+                session.setAttribute("token", sesion.getToken());
 
                 // Redirige al usuario a una página de inicio de sesión exitosa
                 response.sendRedirect("Inicio.jsp");

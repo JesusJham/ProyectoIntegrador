@@ -28,50 +28,46 @@ public class RegistrarOperacion extends HttpServlet {
         try {
             HttpSession session = request.getSession();
             int idUsuario = (int) session.getAttribute("idUsuario");
-            String montoEnviadoStr = request.getParameter("montoEnviado");
-            String montoRecibidoStr = request.getParameter("montoRecibido");
-            int idTarjeta = Integer.parseInt(request.getParameter("tarjeta"));
-            int idCuentaB = Integer.parseInt(request.getParameter("cuenta"));
-            String tipoOperacion = request.getParameter("operacionTipo");
-            float tipoCambio = Float.parseFloat(request.getParameter("taza"));
-            String estado = "En Proceso";
-            int codigo = generarCodigoUnico();
-            Date fechaHora = fechaHora();
-            float montoEnviado = Float.parseFloat(montoEnviadoStr); // Establece un valor predeterminado o directo
-            float montoRecibido = Float.parseFloat(montoRecibidoStr);
+            String token = request.getParameter("token");
+            String accion = request.getParameter("accion");
+            String idTransferenciaParam = request.getParameter("idTransferencia");
+            int idTransferencia = 0; // Valor predeterminado en caso de que el parámetro sea nulo
+            Date nuevaFecha = fechaHora(); // Obtener la fecha actual
 
-            Usuario usuario = new Usuario(idUsuario);
-            Tarjeta tarjeta = new Tarjeta(idTarjeta);
-            CuentaBancarias cuentaBancarias = new CuentaBancarias(idCuentaB);
-
-            Transferencias transferencias = new Transferencias(0, usuario, tarjeta, cuentaBancarias, codigo, tipoOperacion, montoEnviado, montoRecibido, tipoCambio, estado, fechaHora);
-            TransferenciasDAOImpl transferenciasDAOImpl = new TransferenciasDAOImpl();
-
-            boolean exito = transferenciasDAOImpl.registrarTransferencia(transferencias, session);
-
-            if (exito) {
-                // Se ha realizado la transferencia, ahora programamos la actualización del estado
-                ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-                executorService.schedule(() -> {
-                    // Actualizar el estado después de 10 segundos
-                    int idTransferencia = transferencias.getIdTransferencia();
-                    String nuevoEstado = "Atendido"; // El nuevo estado después de 10 segundos
-                    Date nuevaFecha = fechaHora(); // Obtener la fecha actual
-
-                    // Llamar al método para actualizar el estado
-                    TransferenciasDAOImpl transferenciasDAO = new TransferenciasDAOImpl();
-                    boolean estadoActualizado = transferenciasDAO.actualizarEstadoPorUsuario(idTransferencia, nuevoEstado, nuevaFecha);
-
-                    if (estadoActualizado) {
-                        System.out.println("Estado actualizado después de 10 segundos");
-                    } else {
-                        System.out.println("Error al actualizar el estado");
-                    }
-                }, 10, TimeUnit.SECONDS);
-
-                response.sendRedirect("HistorialOperaciones.jsp");
+            if (idTransferenciaParam != null && !idTransferenciaParam.isEmpty()) {
+                // Si el parámetro no es nulo ni está vacío, intenta convertirlo a un entero
+                idTransferencia = Integer.parseInt(idTransferenciaParam);
             } else {
-                response.sendRedirect("error.jsp");
+                // Manejar el caso en el que el parámetro es nulo o está vacío
+                // Puedes imprimir un mensaje de error o tomar alguna otra acción apropiada.
+                System.err.println("El parámetro 'idTransferencia' es nulo o está vacío.");
+            }
+
+            if ("confirmar".equals(accion)) {
+                // Se ha realizado la transferencia, ahora programamos la actualización del estado
+                String nuevoEstado = "Atendido"; // El nuevo estado
+
+                // Llamar al método para actualizar el estado
+                TransferenciasDAOImpl transferenciasDAO = new TransferenciasDAOImpl();
+                boolean estadoActualizado = transferenciasDAO.actualizarEstadoPorUsuario(idTransferencia, nuevoEstado, nuevaFecha);
+                if (estadoActualizado) {
+                    System.out.println("Estado actualizado de inmediato");
+                } else {
+                    System.out.println("Error al actualizar el estado");
+                }
+                response.sendRedirect("HistorialOperaciones.jsp");
+            } else if ("cancelar".equals(accion)) {
+                String nuevoEstado = "Cancelado"; // El nuevo estado
+
+                // Llamar al método para actualizar el estado
+                TransferenciasDAOImpl transferenciasDAO = new TransferenciasDAOImpl();
+                boolean estadoActualizado = transferenciasDAO.actualizarEstadoPorUsuario(idTransferencia, nuevoEstado, nuevaFecha);
+                if (estadoActualizado) {
+                    System.out.println("Estado actualizado de inmediato");
+                } else {
+                    System.out.println("Error al actualizar el estado");
+                }
+                response.sendRedirect("HistorialOperaciones.jsp");
             }
 
         } catch (Exception e) {
@@ -117,14 +113,6 @@ public class RegistrarOperacion extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    private static int generarCodigoUnico() {
-        Random rand = new Random();
-        int min = 10000000; // El número más pequeño de 8 dígitos
-        int max = 99999999; // El número más grande de 8 dígitos
-        int codigoAleatorio = rand.nextInt((max - min) + 1) + min;
-        return codigoAleatorio;
-    }
 
     private Date fechaHora() {
         // Obtener la hora actual

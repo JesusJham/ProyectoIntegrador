@@ -14,6 +14,9 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
         <!--===================== JavaScript main.js=========================-->
         <script src="js/main.js"></script>
+        <script src="js/scripts.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
         <title>Tu Página JSP</title>
     </head>
     <body>

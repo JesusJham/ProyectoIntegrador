@@ -33,10 +33,6 @@ public class Usuario extends Persona {
         this.IdUsuario = IdUsuario;
     }
 
-
-
-    
-
     public int getIdUsuario() {
         return IdUsuario;
     }

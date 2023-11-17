@@ -8,6 +8,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cuentas Bancarias</title>
         <link rel="stylesheet" href="css/inicio.css">
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+        <script src="js/scripts.js"></script>
     </head>
     <body>
         <%@include file="HeaderVertical.jsp" %>
@@ -37,19 +40,19 @@
                     String taza = request.getParameter("taza");
                 %>
 
-                <form action="RegistrarOperacion" method="post" id="OperacionForm">
+                <form action="EnviarCorreo" method="post" id="OperacionForm">
                     <div class="form-container">
                         <div class="form-col">
                             <% if ("compra".equals(request.getParameter("operacionTipo"))) {%>
                             <label for="enviarMoney" class="label-container">Enviarás en Dólares:</label>
                             <p class="enviarMoney">USD $ <%= montoEnviado%></p>
-                            <input type="hidden" name="montoEnviado" value="<%= montoEnviado %>">
-                            <input type="hidden" name="operacionTipo" value="<%= operacionTipo %>">
+                            <input type="hidden" name="montoEnviado" value="<%= montoEnviado%>">
+                            <input type="hidden" name="operacionTipo" value="<%= operacionTipo%>">
                             <%} else if ("venta".equals(request.getParameter("operacionTipo"))) {%>
                             <label for="enviarMoney" class="label-container">Enviarás en Soles:</label>
                             <p class="enviarMoney">PEN S/ <%= montoEnviado%></p>
-                            <input type="hidden" name="montoEnviado" value="<%= montoEnviado %>">
-                            <input type="hidden" name="operacionTipo" value="<%= operacionTipo %>">
+                            <input type="hidden" name="montoEnviado" value="<%= montoEnviado%>">
+                            <input type="hidden" name="operacionTipo" value="<%= operacionTipo%>">
                             <%}%>
                             <label for="tarjeta" class="label-container">Tu tarjeta:</label>
                             <select id="tarjeta" name="tarjeta"  class="select-container">
@@ -65,9 +68,16 @@
                                     }
                                 %>
                                 <%for (Tarjeta tarjeta : listaTarjetas) {%>
-                                <option class="options-container" value="<%= tarjeta.getIdTarjeta()%>" data-titular="<%= tarjeta.getNombreTitular()%>"><%= tarjeta.getNumeroTarjeta()%></option>
-                                <%}%>
+                                <option class="options-container" value="<%= tarjeta.getIdTarjeta()%>" 
+                                        data-titular="<%= tarjeta.getNombreTitular()%>" 
+                                        data-numeroTarjeta="<%= tarjeta.getNumeroTarjeta()%>"
+                                        data-nombreBanco="<%= tarjeta.getBanco().getNombreBanco()%>">
+                                    <%= tarjeta.getNumeroTarjeta()%></option>
+                                    <%}%>
                             </select>
+                            <input type="hidden" name="nombreTitular" id="nombreTitular" value="">
+                            <input type="hidden" name="numeroTarjeta" id="numeroTarjeta" value="">
+                            <input type="hidden" name="nombreBancoTarjeta" id="nombreBancoTarjeta" value="">
                             <label for="titular" class="label-container">Titular de la tarjeta:</label>
                             <span id="titular" class="titular-container"></span>
                         </div>
@@ -75,11 +85,11 @@
                             <% if ("compra".equals(request.getParameter("operacionTipo"))) {%>
                             <label for="enviarMoney" class="label-container">Recibirás en Soles:</label>
                             <p class="enviarMoney" >PEN S/ <%= montoRecibido%></p>
-                            <input type="hidden" name="montoRecibido" value="<%= montoRecibido %>">
+                            <input type="hidden" name="montoRecibido" value="<%= montoRecibido%>">
                             <%} else if ("venta".equals(request.getParameter("operacionTipo"))) {%>
                             <label for="enviarMoney" class="label-container">Recibirás en Dólares</label>
                             <p class="enviarMoney">USD $ <%= montoRecibido%></p>
-                            <input type="hidden" name="montoRecibido" value="<%= montoRecibido %>">
+                            <input type="hidden" name="montoRecibido" value="<%= montoRecibido%>">
                             <%}%>
                             <label for="cuenta" class="label-container">Tu Cuenta Bancaria:</label>
                             <select id="cuenta" name="cuenta"  class="select-container">
@@ -95,12 +105,17 @@
                                     }
                                 %>
                                 <%for (CuentaBancarias cuenta : listaCuentas) {%>
-                                <option class="options-container" value="<%= cuenta.getIdCuentaB()%>" data-titular="<%= cuenta.getBanco().getNombreBanco()%>"><%= cuenta.getNumeroCuenta()%></option>
-                                <%}%>
+                                <option class="options-container" value="<%= cuenta.getIdCuentaB()%>" 
+                                        data-titular="<%= cuenta.getBanco().getNombreBanco()%>"
+                                        data-numeroCuenta="<%= cuenta.getNumeroCuenta()%>">
+                                    <%= cuenta.getNumeroCuenta()%></option>
+                                    <%}%>
                             </select>
+                            <input type="hidden" name="nombreBancoCuenta" id="nombreBancoCuenta" value="">
+                            <input type="hidden" name="numeroCuenta" id="numeroCuenta" value="">
                             <label for="banco" class="label-container">Nombre del Banco:</label>
                             <span id="banco" class="titular-container"></span>
-                            <input type="hidden" name="taza" value="<%= taza %>">
+                            <input type="hidden" name="taza" value="<%= taza%>">
                         </div>
                     </div>
                     <div class="form-buttons">
@@ -116,6 +131,53 @@
             var selectedTarjeta = this.value;
             console.log("ID de la tarjeta seleccionada: " + selectedTarjeta);
         });
+
+        document.getElementById('tarjeta').addEventListener('change', function () {
+            var selectedOption = this.options[this.selectedIndex];
+            var nombreTitular = selectedOption.getAttribute('data-titular');
+            var numeroTarjeta = selectedOption.getAttribute('data-numeroTarjeta');
+            var nombreBancoTarjeta = selectedOption.getAttribute('data-nombreBanco');
+
+            document.getElementById('nombreTitular').value = nombreTitular;
+            document.getElementById('numeroTarjeta').value = numeroTarjeta;
+            document.getElementById('nombreBancoTarjeta').value = nombreBancoTarjeta;
+        });
+
+        document.getElementById('cuenta').addEventListener('change', function () {
+            var selectedOption = this.options[this.selectedIndex];
+            var nombreBancoCuenta = selectedOption.getAttribute('data-titular');
+            var numeroCuenta = selectedOption.getAttribute('data-numeroCuenta');
+
+            document.getElementById('nombreBancoCuenta').value = nombreBancoCuenta;
+            document.getElementById('numeroCuenta').value = numeroCuenta;
+        });
+
+        $(document).ready(function () {
+            $("#OperacionForm").submit(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: $(this).attr("action"),
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        console.log(response);
+                        // Mostrar notificación con SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Éxito!',
+                            text: 'Se ha enviado una confirmación a tu correo electrónico. Por favor, verifica tu bandeja de entrada.'
+                        }).then((result) => {
+                            // Redirigir a espera.jsp después de mostrar la notificación
+                            window.location.href = "Inicio.jsp";
+                        });
+                    },
+                    error: function (error) {
+                        console.error(error);
+                    }
+                });
+            });
+        });
+
     </script>
 
 </html>
