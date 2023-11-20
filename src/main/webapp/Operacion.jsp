@@ -8,9 +8,9 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Cuentas Bancarias</title>
         <link rel="stylesheet" href="css/inicio.css">
-            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
         <script src="js/scripts.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     </head>
     <body>
         <%@include file="HeaderVertical.jsp" %>
@@ -151,33 +151,6 @@
             document.getElementById('nombreBancoCuenta').value = nombreBancoCuenta;
             document.getElementById('numeroCuenta').value = numeroCuenta;
         });
-
-        $(document).ready(function () {
-            $("#OperacionForm").submit(function (event) {
-                event.preventDefault();
-                $.ajax({
-                    type: "POST",
-                    url: $(this).attr("action"),
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        console.log(response);
-                        // Mostrar notificación con SweetAlert
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: 'Se ha enviado una confirmación a tu correo electrónico. Por favor, verifica tu bandeja de entrada.'
-                        }).then((result) => {
-                            // Redirigir a espera.jsp después de mostrar la notificación
-                            window.location.href = "Inicio.jsp";
-                        });
-                    },
-                    error: function (error) {
-                        console.error(error);
-                    }
-                });
-            });
-        });
-
     </script>
 
 </html>

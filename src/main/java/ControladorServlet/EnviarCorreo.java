@@ -38,7 +38,6 @@ public class EnviarCorreo extends HttpServlet {
         String toEmail = (String) session.getAttribute("email");
 
         String token = (String) session.getAttribute("token");
-        session.setAttribute("token", token);//ALMACENAR TOKEN
 
         String subject = "Confirmación para la transacción";
         String montoEnviadoStr = request.getParameter("montoEnviado");
@@ -56,24 +55,6 @@ public class EnviarCorreo extends HttpServlet {
         // Verificar el tipo de operación y establecer los símbolos de moneda correspondientes
         String simboloMontoEnviado = "";
         String simboloMontoRecibido = "";
-
-        if (null == tipoOperacion) {
-            System.out.println("Tipo de operación no reconocido: " + tipoOperacion);
-        } else {
-            switch (tipoOperacion) {
-                case "Compra":
-                    simboloMontoEnviado = "$";
-                    simboloMontoRecibido = "S/";
-                    break;
-                case "Venta":
-                    simboloMontoEnviado = "S/";
-                    simboloMontoRecibido = "$";
-                    break;
-                default:
-                    System.out.println("Tipo de operación no reconocido: " + tipoOperacion);
-                    break;
-            }
-        }
 
         //Informacion adicional para el envio del correo
         String nombreTitular = request.getParameter("nombreTitular");
@@ -137,10 +118,12 @@ public class EnviarCorreo extends HttpServlet {
                         + "\n\nNombre del Banco de la Cuenta Bancaria:\n" + nombreBancoCuenta
                         + "\n\nNúmero de Cuenta:\n" + numeroCuenta
                         + "<form action=\"" + urlConfirmacion + "\" method=\"post\">"
+                        + "<input type=\"hidden\" name=\"idUsuario\" value=\"" + idUsuario + "\">"
                         + "<input type=\"hidden\" name=\"idTransferencia\" value=\"" + idTransferencia + "\">"
                         + "<input type=\"submit\" name=\"accion\" value=\"Confirmar\">"
                         + "</form>"
                         + "<form action=\"" + urlCancelar + "\" method=\"post\">"
+                        + "<input type=\"hidden\" name=\"idUsuario\" value=\"" + idUsuario + "\">"
                         + "<input type=\"hidden\" name=\"idTransferencia\" value=\"" + idTransferencia + "\">"
                         + "<input type=\"submit\" name=\"accion\" value=\"Cancelar\">"
                         + "</form>";
@@ -151,13 +134,19 @@ public class EnviarCorreo extends HttpServlet {
                 // Enviar el mensaje
                 Transport.send(message);
 
+                System.out.println("Correo enviado exitosamente.");
+
                 // Redirigir a la página de éxito
                 RequestDispatcher dispatcher = request.getRequestDispatcher("Inicio.jsp");
                 dispatcher.forward(request, response);
+
             } else {
                 response.sendRedirect("error.jsp");
             }
+
         } catch (MessagingException e) {
+            e.printStackTrace(); // Agrega un registro para entender cualquier problema
+
             // Manejar errores
             throw new RuntimeException(e);
         }

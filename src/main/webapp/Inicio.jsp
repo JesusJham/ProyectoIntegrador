@@ -18,6 +18,7 @@
         <title>Inicio Operación</title>
         <link rel="stylesheet" href="css/inicio.css">
         <script src="js/main.js"></script>
+        <script src="js/scripts.js"></script>
 
     </head>
     <body>

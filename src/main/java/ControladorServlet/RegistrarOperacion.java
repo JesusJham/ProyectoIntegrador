@@ -5,14 +5,9 @@
 package ControladorServlet;
 
 import DAO.TransferenciasDAOImpl;
-import Modelo.*;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -51,7 +46,7 @@ public class RegistrarOperacion extends HttpServlet {
                 TransferenciasDAOImpl transferenciasDAO = new TransferenciasDAOImpl();
                 boolean estadoActualizado = transferenciasDAO.actualizarEstadoPorUsuario(idTransferencia, nuevoEstado, nuevaFecha);
                 if (estadoActualizado) {
-                    System.out.println("Estado actualizado de inmediato");
+                    System.out.println("Estado actualizado de inmediato Confirmado");
                 } else {
                     System.out.println("Error al actualizar el estado");
                 }
@@ -65,7 +60,7 @@ public class RegistrarOperacion extends HttpServlet {
                 if (estadoActualizado) {
                     System.out.println("Estado actualizado de inmediato");
                 } else {
-                    System.out.println("Error al actualizar el estado");
+                    System.out.println("Error al actualizar el estado Cancelado");
                 }
                 response.sendRedirect("HistorialOperaciones.jsp");
             }
