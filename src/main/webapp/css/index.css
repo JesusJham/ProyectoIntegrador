@@ -254,12 +254,20 @@ _______________________________________________________________*/
 
 .process__img {
     margin-bottom: 2rem;
+
 }
 
 .process__title {
     color: var(--color-white);
     font-size: var(--fs-lg);
     margin-bottom: 1rem;
+}
+
+.process{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
 .process__wrapper {
@@ -389,15 +397,15 @@ _______________________________________________________________*/
 .testimonial__wrapper .swiper-pagination-bullets
 
 /*Matriz de elementos HTML de viñetas de paginación. Para obtener una diapositiva específica*/
-    {
+{
     justify-content: space-around;
 }
 
 .testimonial__wrapper .swiper-pagination-bullet
 
 /*Nombre de clase CSS de viñeta de paginación única
-  */
-    {
+*/
+{
     background-color: var(--color-text);
     border-radius: 0;
     width: 3rem;

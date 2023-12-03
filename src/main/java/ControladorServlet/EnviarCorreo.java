@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Random;
+import java.util.UUID;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.servlet.ServletException;
@@ -36,9 +37,6 @@ public class EnviarCorreo extends HttpServlet {
         HttpSession session = request.getSession();
         int idUsuario = (int) session.getAttribute("idUsuario");
         String toEmail = (String) session.getAttribute("email");
-
-        String token = (String) session.getAttribute("token");
-
         String subject = "Confirmación para la transacción";
         String montoEnviadoStr = request.getParameter("montoEnviado");
         String montoRecibidoStr = request.getParameter("montoRecibido");
@@ -51,6 +49,9 @@ public class EnviarCorreo extends HttpServlet {
         Date fechaHora = fechaHora();
         float montoEnviado = Float.parseFloat(montoEnviadoStr); // Establece un valor predeterminado o directo
         float montoRecibido = Float.parseFloat(montoRecibidoStr);
+        // Generar un nuevo token único
+        String nuevoToken = generarNuevoToken();
+        session.setAttribute("token", nuevoToken); // Almacena el nuevo token en la sesión
 
         // Verificar el tipo de operación y establecer los símbolos de moneda correspondientes
         String simboloMontoEnviado = "";
@@ -103,20 +104,35 @@ public class EnviarCorreo extends HttpServlet {
                 message.setSubject(subject);
 
                 // Generar token único
-                String urlBase = "http://localhost:8080/ProyectoIntegrador/RegistrarOperacion?token=" + token;
+                String urlBase = "http://localhost:8080/ProyectoIntegrador/RegistrarOperacion?token=" + nuevoToken;
 
                 String urlConfirmacion = urlBase + "&accion=confirmar";
                 String urlCancelar = urlBase + "&accion=cancelar";
 
                 // Incluir el mensaje con el formulario y el botón de confirmación
-                String emailContent = "Tipo de operación: " + tipoOperacion + "\n\nTaza:\n" + tipoCambio
-                        + "\n\nDetalles del Envío:\n" + "\n\nMonto Enviado:\n" + montoEnviadoStr + simboloMontoEnviado
-                        + "\n\nNombre del titular de la Tarjeta:\n" + nombreTitular
-                        + "\n\nNombre del banco de la Tarjeta:\n" + nombreBancoTarjeta
-                        + "\n\nNúmero de la tarjeta:\n" + numeroTarjeta
-                        + "\n\nDetalles de Recepción:\n" + "\n\nMonto a Recibir:\n" + montoRecibidoStr + simboloMontoRecibido
-                        + "\n\nNombre del Banco de la Cuenta Bancaria:\n" + nombreBancoCuenta
-                        + "\n\nNúmero de Cuenta:\n" + numeroCuenta
+                String emailContent = "<html>"
+                        + "<head>"
+                        + "<style>"
+                        + "/* Aquí puedes agregar estilos CSS para dar formato al formulario */"
+                        + "body { font-family: Arial, sans-serif; }"
+                        + "form { margin-top: 20px; }"
+                        + "label { display: block; margin-bottom: 5px; }"
+                        + "input { width: 100%; padding: 8px; margin-bottom: 10px; box-sizing: border-box; }"
+                        + "</style>"
+                        + "</head>"
+                        + "<body>"
+                        + "<h2>Detalles de la Operación</h2>"
+                        + "<p>Tipo de operación: " + tipoOperacion + "</p>"
+                        + "<p>Taza: " + tipoCambio + "</p>"
+                        + "<h3>Detalles del Envío</h3>"
+                        + "<p>Monto Enviado: " + montoEnviadoStr + simboloMontoEnviado + "</p>"
+                        + "<p>Nombre del titular de la Tarjeta: " + nombreTitular + "</p>"
+                        + "<p>Nombre del banco de la Tarjeta: " + nombreBancoTarjeta + "</p>"
+                        + "<p>Número de la tarjeta: " + numeroTarjeta + "</p>"
+                        + "<h3>Detalles de Recepción</h3>"
+                        + "<p>Monto a Recibir: " + montoRecibidoStr + simboloMontoRecibido + "</p>"
+                        + "<p>Nombre del Banco de la Cuenta Bancaria: " + nombreBancoCuenta + "</p>"
+                        + "<p>Número de Cuenta: " + numeroCuenta + "</p>"
                         + "<form action=\"" + urlConfirmacion + "\" method=\"post\">"
                         + "<input type=\"hidden\" name=\"idUsuario\" value=\"" + idUsuario + "\">"
                         + "<input type=\"hidden\" name=\"idTransferencia\" value=\"" + idTransferencia + "\">"
@@ -126,7 +142,9 @@ public class EnviarCorreo extends HttpServlet {
                         + "<input type=\"hidden\" name=\"idUsuario\" value=\"" + idUsuario + "\">"
                         + "<input type=\"hidden\" name=\"idTransferencia\" value=\"" + idTransferencia + "\">"
                         + "<input type=\"submit\" name=\"accion\" value=\"Cancelar\">"
-                        + "</form>";
+                        + "</form>"
+                        + "</body>"
+                        + "</html>";
 
                 message.setContent(emailContent, "text/html; charset=utf-8");
 
@@ -168,6 +186,13 @@ public class EnviarCorreo extends HttpServlet {
         int codigoAleatorio = rand.nextInt((max - min) + 1) + min;
         return codigoAleatorio;
     }
+    
+    private String generarNuevoToken() {
+    // Lógica para generar un nuevo token único
+    // Puedes usar cualquier método que desees para generar el token
+    // Aquí hay un ejemplo simple utilizando la clase UUID
+    return UUID.randomUUID().toString();
+}
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

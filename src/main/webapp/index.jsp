@@ -98,24 +98,24 @@
                     </div>
                     <div class="d-grid process__wrapper">
                         <div class="process">
-                            <img src="" alt="icono1" class="process__img">
+                            <img src="img/CREA_C.png" alt="icono1" class="process__img">
                             <h2 class="process__title">Crea tu cuenta</h2>
                             <p class="process__description">Crea tu cuenta personal o de
                                 empresa, es completamente gratis.</p>
                         </div>
                         <div class="process">
-                            <img src="" alt="icono2" class="process__img">
+                            <img src="img/cotiza.png" alt="icono2" class="process__img">
                             <h2 class="process__title">Cotiza tu operación</h2>
                             <p class="process__description">Elige el monto que deseas cambiar e inicia una operación.</p>
                         </div>
                         <div class="process">
-                            <img src="" alt="icono3" class="process__img">
+                            <img src="img/transferencia.png" alt="icono3" class="process__img">
                             <h2 class="process__title">Transfiere</h2>
                             <p class="process__description">El monto desde tu banca y
                                 envíanos una foto del comprobante.</p>
                         </div>
                         <div class="process">
-                            <img src="" alt="icono4" class="process__img">
+                            <img src="img/recibe.png" alt="icono4" class="process__img">
                             <h2 class="process__title">Recibe</h2>
                             <p class="process__description">Recibe el dinero en una cuenta bancaria o tarjeta de crédito</p>
                         </div>
@@ -143,21 +143,21 @@
                     </div>
                     <div class="d-grid qualities__wrapper">
                         <div class="qualities__content">
-                            <img src="" alt="icono5" class="qualities__img">
+                            <img src="img/calidad.png" alt="icono5" class="qualities__img">
                             <h3 class="qualities__title">Mejor Calidad</h3>
                             <p class="qualities__description">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil quaerat,
                                 quos porro libero sint eveniet incidunt dignissimos dicta. Cum impedit repellendus cupiditate soluta sunt
                                 amet eaque minus id quo temporibus.</p>
                         </div>
                         <div class="qualities__content">
-                            <img src="" alt="icono6" class="qualities__img">
+                            <img src="img/atencion.png" alt="icono6" class="qualities__img">
                             <h3 class="qualities__title">Soporte 24/7</h3>
                             <p class="qualities__description">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil quaerat,
                                 quos porro libero sint eveniet incidunt dignissimos dicta. Cum impedit repellendus cupiditate soluta
                                 sunt amet eaque minus id quo temporibus.</p>
                         </div>
                         <div class="qualities__content">
-                            <img src="" alt="icono6" class="qualities__img">
+                            <img src="img/precio.png" alt="icono6" class="qualities__img">
                             <h3 class="qualities__title">Precio competitivo</h3>
                             <p class="qualities__description">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil quaerat,
                                 quos porro libero sint eveniet incidunt dignissimos dicta. Cum impedit repellendus cupiditate soluta
@@ -245,7 +245,7 @@
                         <a href="" class="footer__contact">952120321</a>
                     </div>
                 </div>
-                <p class="footer__copyright">&copy; 2023 Jesus Hidalgo. All Rights Reserved</p>
+                <p class="footer__copyright">&copy; 2023 Nexus. All Rights Reserved</p>
             </div>
         </footer>
 

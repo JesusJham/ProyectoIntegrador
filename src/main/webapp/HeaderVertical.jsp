@@ -53,7 +53,7 @@
                 <ul class="nav-ul">
                     <li class="nav-li"><a href="Inicio.jsp" class="nav__item">Inicio de transferencia</a></li>
                     <li class="nav-li"><a href="HistorialOperaciones.jsp" class="nav__item">Historial de Operaciones</a></li>
-                    <li class="nav-li"><a href="Tarjetas.jsp" class="nav__item">Tarjetas</a></li>
+                    <li class="nav-li"><a href="Tarjetas.jsp" class="nav__item">Tarjetas Interbancarias</a></li>
                     <li class="nav-li"><a href="CuentasBancarias.jsp" class="nav__item">Cuentas Bancarias</a></li>
                 </ul>
             </nav>
