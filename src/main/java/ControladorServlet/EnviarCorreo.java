@@ -104,7 +104,7 @@ public class EnviarCorreo extends HttpServlet {
                 message.setSubject(subject);
 
                 // Generar token único
-                String urlBase = "http://localhost:8080/ProyectoIntegrador/RegistrarOperacion?token=" + nuevoToken;
+                String urlBase = "http://localhost:8080/ProyectoIntegrador/IniciarSesion.jsp?token=" + nuevoToken;
 
                 String urlConfirmacion = urlBase + "&accion=confirmar";
                 String urlCancelar = urlBase + "&accion=cancelar";

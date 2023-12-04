@@ -16,6 +16,7 @@
         <link rel="stylesheet" href="css/index.css">
         <!--=================== Remixicons ====================-->
         <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+         <script src="js/scripts.js"></script>
     </head>
     <body>
         <!--=================== Header ====================-->
@@ -58,7 +59,7 @@
         <div class="form-wrapper">
             <div class="form-container register">
                 <h1 class="form-title">Registro de Usuario</h1>
-                <form action="RegistrarUsuario" method="post">
+                <form action="RegistrarUsuario" method="post" id="RegistroForm">
                     <label for="nombre" class="form-label">Nombre:</label>
                     <input type="text" name="nombre" required class="form-input">
 
